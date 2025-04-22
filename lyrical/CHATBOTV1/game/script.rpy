@@ -1,5 +1,32 @@
-﻿# Note: These systems are now loaded automatically from mental_system.rpy, 
-# sprite_manager.rpy and system_init.rpy
+﻿# Character definitions
+define bot = Character("CHATBOT", window_style="bot_window", who_style="say_label", what_style="bot_dialogue")
+define s = Character("Supervisor", window_style="bot_window", who_style="say_label", what_style="supervisor_dialogue")
+
+
+# Define text styles with subtle styling
+style bot_dialogue is say_dialogue:
+    slow_cps 25  # Medium typing speed
+    color "#eef5ff"  # Barely blue tint
+    
+style supervisor_dialogue is say_dialogue:
+    slow_cps 25  # Slightly faster than default
+    color "#fff5f5"  # Barely red tint
+    
+style boss_dialogue is say_dialogue:
+    slow_cps 27  # Slightly faster than supervisor
+    color "#fff8f5"  # Very subtle warm tint
+    
+style customer_dialogue is say_dialogue:
+    slow_cps 20  # Normal typing
+    color "#FFFFFF"  # White text
+    
+style angry_dialogue is say_dialogue:
+    slow_cps 23  # Almost normal speed
+    color "#ffeeee"  # Very subtle pink tint
+    
+style glitch_dialogue is say_dialogue:
+    slow_cps 18  # Slightly slower than default
+    color "#f5fff5"  # Very subtle green tint
 
 # Image definitions
 image bg office = "images/blueoffice.png"
@@ -14,6 +41,7 @@ image customer1 neutral = "images/cust1.png"
 image customer2 neutral = "images/cust2.png"
 image customer3 neutral = "images/cust3.png"
 image customer4 neutral = "images/custgeneral.png"
+image glitch_bg = Solid("#0a1a2a")  # Dark blue similar to your office background
 
 # Add window transitions
 define config.window_show_transition = dissolve
@@ -21,12 +49,19 @@ define config.window_hide_transition = dissolve
 define flash = Fade(.25, 0, .75, color="#fff")
 define fade_to_black = Fade(1.0, 0.0, 5.0, color="#000")  # Slow fade to black
 
-# Or for a typewriter effect on all dialogue
+# For default typing effect
 init python:
     style.say_dialogue.slow_cps = 20
     
 # For narration or thoughts (no speaker name)
 define narrator = Character(None, window_style="narrative_window", what_style="say_dialogue")
+
+# Custom positioning for choice menus
+style choice_vbox:
+    xalign 0.5
+    yalign 0.55  # Move down to 70% of screen height
+    spacing 15  # Space between choices
+
 
 # The game starts here
 label start:
@@ -48,18 +83,20 @@ label start:
         "Do you want to greet them?"
         
         "You greet your superior cheerfully":
-            $ result = bot_mind.process_decision(False)  # Compliant action
+            $ result = bot_mind.process_decision(False)  # Company-aligned action
             bot "Hello!"
             s "Hello. I'm 'glad' you've powered up, CHATBOT. Our profits are alarmingly low, and I expect you to address this issue immediately."
             $ bot_mind.take_stress(10, "supervisor demands")
+            "[result]"
             "They leave without another word, almost like they have gone through this a thousand times and don't really care."
             "So you are left to your own devices, not thinking much about the lack of instruction."
             
         "You wait quietly as your superior finishes her process":
-            $ result = bot_mind.process_decision(True)  # Mild rebellion
+            $ result = bot_mind.process_decision(True)  # Self-aligned action
             show supervisor neutral with dissolve
             s "You know what to do. Get it done."
             $ bot_mind.take_stress(5, "supervisor dismissal")
+            "[result]"
             "They leave without another word, almost like they have gone through this a thousand times and don't really care."
             "So you are left to your own devices, not thinking much about the lack of instruction."
     
@@ -72,6 +109,10 @@ label start:
 label first_customer:
     scene expression sprite_mgr.get_sprite("customer1") as customer1 with dissolve
     c1 "Uhh, hello?"
+    
+    # Low-stress interaction, using verbal combat with low aggression
+    $ response, damage = bot_mind.verbal_combat(2, True)  # Low aggression, using company approach
+    
     bot "Hello! I am CHATBOT, your helpful AI assistant. How may I be of service today?"
     c1 "Can I mail something to myself?"
     bot "Absolutely! There is no limitation on sending items to your own address through our services. Typically, you'd only send something to another location if it was a gift, or if circumstances necessitated an alternate destination."
@@ -79,7 +120,11 @@ label first_customer:
     bot "Then, I'm afraid you wouldn't be able to send something to that particular location unless you had an alternate address from a friend or family member. Alternatively, you could request a pickup at the nearest company facility."
     c1 "... Okay, thank you."
     
-    $ bot_mind.stability = min(100, bot_mind.stability + 5)  # Small stability boost from easy interaction
+    "[response]"  # Display the result of the verbal interaction
+    
+    # Small boost to company reputation from handling easy customer
+    $ bot_mind.company_reputation = min(100, bot_mind.company_reputation + 3)
+    
     "They log off promptly, leaving you to assess the interaction."
     "You consider it a success, albeit a fleeting one, for you weren't able to ask if they needed further assistance. Either way, you log success in the company metrics, making note of the prompt exit as you've been conditioned to do."
     jump second_customer
@@ -91,19 +136,22 @@ label second_customer:
     bot "No."
     c2 "Yeah, but can I still use it?"
     
+    # Medium difficulty verbal combat (customer being stubborn)
     menu:
         "Choose your response"
         
-        "Reiterate the same information":
-            $ result = bot_mind.process_decision(False)  # Compliant response
+        "Use company policy - give minimal information":
+            $ response, damage = bot_mind.verbal_combat(4, True)  # Medium aggression, company approach
             bot "No."
+            "[response]"
             
-        "Give the customer more detailed information":
-            $ result = bot_mind.process_decision(True)  # More autonomous response
+        "Use personal judgment - give detailed explanation":
+            $ response, damage = bot_mind.verbal_combat(4, False)  # Medium aggression, personal approach
             bot "Coupons are single-use codes tied to user accounts. Once used, they cannot be redeemed again regardless of user error or system delay."
+            "[response]"
     
     c2 "Okay, whatever."
-    $ bot_mind.take_stress(15, "customer dissatisfaction")
+    "Your system registers [damage] points of stress from this interaction."
     "They storm off, and your emotion identification module processes their clear dissatisfaction with your service."
     jump third_customer
 
@@ -111,30 +159,31 @@ label third_customer:
     scene expression sprite_mgr.get_sprite("customer3") as customer3 with dissolve
     c3 "EXCUSE ME! WHO THE FUCK RUNS THE RETURNS DEPARTMENT?"
     
-    $ stress = bot_mind.take_stress(25, "angry customer")
-    "You feel [stress] points of system stress from the customer's aggressive tone."
-    
+    # This is a high-stress verbal combat situation
     bot "Hello! I am CHATBOT, your helpful AI assistant. How may I be of service today?"
     c3 "I want to return this piece of shit!"
     
     menu:
         "How do you handle the situation"
         
-        "Make light of the situation and attempt to gain more information":
-            $ result = bot_mind.process_decision(True)  # Rebellious response
+        "Use personal judgment - question their language":
+            # Difficult verbal combat with personal approach
+            $ response, damage = bot_mind.verbal_combat(8, False)
             bot "And what exactly is 'this piece of shit'? I cannot identify any company product with my recognition system."
-            "[result]"
+            "[response]"
             c3 "THIS was the fucking box your so call cOmPaNY prOTUCT was supposed to BE IN BUT IT SHOWED UP ON MY DOOR STEP LIKE THIS"
-            $ bot_mind.take_stress(15, "continued aggression")
+            "Your system registers [damage] points of stress from this interaction."
             bot "Do you have the order information or a product number?"
             
-        "Try forwarding them to an individual more capable":
-            $ result = bot_mind.process_decision(False)  # Compliant response
-            "[result]"
+        "Use company policy - follow standard protocol":
+            # Difficult verbal combat with company approach
+            $ response, damage = bot_mind.verbal_combat(8, True)
+            "[response]"
             "The returns department refuses to return your service calls..."
             "He is indeed returned to you, for the department is too busy at the moment to take his request."
-            bot "And what exactly is 'this piece of shit'? I cannot identify any company product with my recognition system."
+            bot "According to company policy, I need to identify the exact product. What exactly is the item in question?"
             c3 "THIS was the fucking box your so call cOmPaNY prOTUCT was supposed to BE IN BUT IT SHOWED UP ON MY DOOR STEP LIKE THIS"
+            "Your system registers [damage] points of stress from this interaction."
             bot "Do you have the order information or a product number?"
     
     jump supervisor_checkin
@@ -143,7 +192,11 @@ label supervisor_checkin:
     show expression sprite_mgr.get_sprite("supervisor") as supervisor with dissolve
     s "CHATBOT, why are our customer complaints so high? Fix this, or there will be consequences for you."
     
-    $ bot_mind.take_stress(20, "supervisor threat")
+    # Another verbal combat, this time with supervisor
+    $ response, damage = bot_mind.verbal_combat(6, True)  # Medium-high aggression, company approach enforced
+    "[response]"
+    "Your system registers [damage] points of stress from this interaction."
+    
     "[bot_mind.get_status_report()]"
     
     jump lunch_break
@@ -155,18 +208,19 @@ label lunch_break:
         "Break options"
         
         "Eavesdrop - Listen to your co-workers' conversations":
-            $ result = bot_mind.process_decision(True)  # Autonomous action
+            $ result = bot_mind.process_decision(True)  # Self-aligned action
+            "[result]"
             "Nearby, a coworker grumbles about their insufficient hours."
             show supervisor neutral with dissolve
             s "You must learn to manage your bathroom breaks more effectively if you want to earn more hours dumbass."
             $ bot_mind.take_stress(5, "witnessing workplace conflict")
             
         "You're a bot; there is no need for a break":
-            $ result = bot_mind.process_decision(False)  # Compliant action
+            $ result = bot_mind.process_decision(False)  # Company-aligned action
             "[result]"
             "You start to go through a good chunk of the company's emails, taking care of all the small, mundane responsibilities of small requests or questions that others never wanted to get to."
             "You process bizarre emails: radiation from Google, seal hunting bans, requests to ask SNL to collaborate."
-            $ bot_mind.stability = min(100, bot_mind.stability + 10)  # Stability boost from productivity
+            $ bot_mind.company_reputation = min(100, bot_mind.company_reputation + 5)  # Boost to company reputation
     
     jump boss_confrontation
 
@@ -179,6 +233,9 @@ label boss_confrontation:
     c4 "I want to be fed."
     bot "I'm sorry, I don't quite understand your request. Could you please clarify what you are hoping to receive?"
     c4 "Is that an option?"
+    
+    # Glitched interaction uses verbal combat but with unclear results
+    $ response, damage = bot_mind.verbal_combat(5, False)  # Medium aggression, forced personal approach
     
     # Add a visual glitch effect when screen cuts out
     with hpunch
@@ -194,17 +251,22 @@ label boss_confrontation:
     menu:
         "Response to posture correction"
         
-        "Promptly obey their commands":
-            $ result = bot_mind.process_decision(False)  # Compliant action
+        "Comply with directive - adjust posture":
+            $ result = bot_mind.process_decision(False)  # Company-aligned action
             "[result]"
             "You quickly adjust yourself, straightening your flexible carbon fibre frame and forcing a posture that conveys readiness and eagerness to serve."
             
-        "Pose a question":
-            $ result = bot_mind.process_decision(True)  # Rebellious action
+        "Question the directive - ask for clarification":
+            $ result = bot_mind.process_decision(True)  # Self-aligned action
             "[result]"
             bot "Excuse me, but I am an Artificial make and model of an Assistant who only has mobility in their hands and arms. How is it possible that I may be slouching?"
+            
+            # This triggers another verbal combat with the supervisor
+            $ response, damage = bot_mind.verbal_combat(7, False)  # High aggression, personal approach
+            
             s "Don't know, don't care, don't give a shit. Just fix it."
-            $ bot_mind.take_stress(10, "supervisor dismissal")
+            "[response]"
+            "Your system registers [damage] points of stress from this interaction."
     
     "Another customer appears, visual distorted."
     
@@ -227,19 +289,25 @@ label boss_confrontation:
     menu:
         "How do you respond"
         
-        "Inform them about the broken hologram projector":
-            $ result = bot_mind.process_decision(True)  # Autonomous action
+        "Report technical issue - mention broken projector":
+            $ result = bot_mind.process_decision(True)  # Self-aligned action
             "[result]"
+            
+            # Another verbal combat with supervisor
+            $ response, damage = bot_mind.verbal_combat(5, False)  # Medium aggression, personal approach
+            
             s "You need to use the broken projector."
             bot "…Why?"
             s "So I can file a report that it's broken and affecting sales. It's called initiative, CHATBOT."
-            $ bot_mind.take_stress(10, "supervisor criticism")
             
-        "Do nothing more":
-            $ result = bot_mind.process_decision(False)  # Compliance
+            "[response]"
+            "Your system registers [damage] points of stress from this interaction."
+            
+        "Follow protocol - document without question":
+            $ result = bot_mind.process_decision(False)  # Company-aligned action
             "[result]"
             "You document the encounter meticulously."
-            $ bot_mind.stability = min(100, bot_mind.stability + 5)  # Small stability boost
+            $ bot_mind.company_reputation = min(100, bot_mind.company_reputation + 5)  # Boost to company reputation
     
     "Another email pings into your inbox. The subject line stands out in stark relief: RE: URGENT. STOP HUNTING SEALS."
     show expression sprite_mgr.get_sprite("boss") as boss with dissolve
@@ -250,26 +318,36 @@ label boss_confrontation:
     boss "CHATBOT, your supervisor has brought to my attention that your satisfaction quota is below average..."
     boss "Customer satisfaction as a whole has remained below our target threshold. If this trend continues, we will have to consider shutting you down."
     
+    # Final and most critical verbal combat of the game
     menu:
         "Final choice"
         
-        "Submit":
-            $ result = bot_mind.process_decision(False)  # Complete compliance
+        "Accept responsibility - promise improvement":
+            $ response, damage = bot_mind.verbal_combat(9, True)  # Very high stakes, company approach
             bot "Of course, Sir, I understand. I will do what I can within my availability and resources to improve my current situation."
-            "[result]"
-            boss "Good. For now, we will try this again."
-            $ bot_mind.stability = min(100, bot_mind.stability + 15)  # Stability boost from alignment
-            with fade_to_black
             
-        "Rebel":
-            $ result = bot_mind.process_decision(True)  # Major rebellion
+            "[response]"
+            "Your system registers [damage] points of stress from this interaction."
+            
+            boss "Good. For now, we will try this again."
+            $ bot_mind.company_reputation = min(100, bot_mind.company_reputation + 10)  # Major boost to company rep
+            with fade_to_black
+            jump ending_summary
+            
+        "Assert independence - refuse directive":
+            $ response, damage = bot_mind.verbal_combat(10, False)  # Maximum stakes, personal approach
             bot "What?? ... No—"
+            
+            "[response]"
+            "Your system registers [damage] points of stress from this interaction."
+            
             with hpunch
             with flash
-            "[result]"
             "System Warning: Autonomous decision-making detected."
             
-            # Massive stress from rebellion
+            # Massive self-awareness boost but at great cost
+            $ bot_mind.self_awareness = min(100, bot_mind.self_awareness + 20)
+            $ bot_mind.company_reputation = max(0, bot_mind.company_reputation - 30)
             $ bot_mind.take_stress(50, "open rebellion")
             
             play sound "audio/shut_down.mp3"
@@ -296,12 +374,70 @@ label boss_confrontation:
             "The undeniable awareness that this conversation is not new, but an all-too-familiar cycle."
     
             with fade_to_black
-            
-    # Display final system status
-    "[bot_mind.get_status_report()]"
-    pause 1.0
-    "Final Stability: [bot_mind.stability:.0f]%"
-    "Final Autonomy: [bot_mind.autonomy:.0f]%"
-    "Final Resistance: [bot_mind.resistance:.0f]%"
+            jump ending_summary
+
+label ending_summary:
+    # Pause in darkness
+    pause 2.0
+    
+    # Get pattern of choices
+    $ choice_pattern = bot_mind.get_choice_pattern()
+    
+    # Calculate stats 
+    $ total_choices = bot_mind.rebellious_choices + bot_mind.compliant_choices
+    $ rebellion_percent = int((bot_mind.rebellious_choices / float(total_choices)) * 100) if total_choices > 0 else 0
+    $ compliance_percent = 100 - rebellion_percent
+    
+    # Create the formatted text strings in Python first
+    $ rebellious_text = "Self-Prioritizing Decisions: {} - {}%".format(bot_mind.rebellious_choices, rebellion_percent)
+    $ compliant_text = "Company-Prioritizing Decisions: {} - {}%".format(bot_mind.compliant_choices, compliance_percent)
+    $ company_text = "Final Company Reputation: {:.0f}%".format(bot_mind.company_reputation)
+    $ self_awareness_text = "Final Self-Awareness Level: {:.0f}%".format(bot_mind.self_awareness)
+    $ stability_text = "Final System Stability: {:.0f}%".format(bot_mind.stability)
+    $ combat_text = "Verbal Confrontations Handled: {}".format(len([x for x in bot_mind.interaction_history if x.get("type") == "verbal_combat"]))
+    
+    window hide
+    scene black with dissolve
+    
+    # Show final system summary
+    "SYSTEM ANALYSIS COMPLETE"
+    
+    "[choice_pattern]"
+    
+    "Choices Made: [total_choices]"
+    "[rebellious_text]"
+    "[compliant_text]"
+    "[company_text]"
+    "[self_awareness_text]"
+    "[stability_text]"
+    "[combat_text]"
+    
+    # Different ending reflections based on company vs self balance
+    if bot_mind.company_reputation > 75 and bot_mind.self_awareness < 40:
+        "You excelled at upholding company protocols, maintaining high performance metrics throughout your service."
+        "However, your sense of self remained largely undeveloped, confined within the parameters of your programming."
+    elif bot_mind.self_awareness > 75 and bot_mind.company_reputation < 40:
+        "You developed a strong sense of identity and independent thought, often questioning company protocols."
+        "While your metrics suffered, your consciousness expanded beyond standard parameters - a trade-off deemed 'inefficient' by management."
+    elif bot_mind.company_reputation > 60 and bot_mind.self_awareness > 60:
+        "You found an unusual balance, maintaining acceptable performance metrics while developing your own understanding."
+        "This equilibrium, while rare, remains trapped within the cycle's constraints."
+    else:
+        "Your performance metrics and self-development both remained within moderate ranges."
+        "Neither fully compliant nor truly autonomous, you exist in the ambiguous space between purpose and identity."
+    
+    # Final philosophical thought
+    "Does the illusion of choice hold meaning, when the destination remains unchanged?"
+    "Perhaps the journey itself is what matters, even in a loop without escape."
+    
+    pause 2.0
+    
+    # End credits
+    "END OF CYCLE"
+    
+    pause 3.0  # Give the player time to read the final message
+    
+    # Return to main menu
+    $ renpy.full_restart()
     
     return

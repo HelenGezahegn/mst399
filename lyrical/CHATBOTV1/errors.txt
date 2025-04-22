@@ -2,17 +2,9 @@
 errors listed below, and try again.
 
 
-File "game/python_modules.rpy", line 64: expected statement.
-    import renpy
-                ^
-
-File "game/python_modules.rpy", line 65: expected statement.
-    from renpy.display.transform import Transform
-              ^
-
-File "game/python_modules.rpy", line 67: expected statement.
+File "game/sprite_manager.rpy", line 1: expected statement.
     class SpriteManager:
                        ^
 
 Ren'Py Version: Ren'Py 8.3.7.25031702
-Tue Apr 22 06:03:55 2025
+Tue Apr 22 07:09:56 2025
