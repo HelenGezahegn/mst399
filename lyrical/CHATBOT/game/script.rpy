@@ -4,10 +4,10 @@ define c1 = Character("Customer 1")
 define c2 = Character("Customer 2")
 define c3 = Character("Customer 3")
 
-image bg office = "images/office.png"
-image customer1 neutral = "images/customer1.png"
-image customer2 neutral = "images/customer2.png"
-image customer3 neutral = "images/customer3.png"
+image bg office = "images/blueoffice.png"
+image customer1 neutral = "images/cust1.png"
+image customer2 neutral = "images/cust2.png"
+image customer3 neutral = "images/cust3.png"
 
 label start:
 
@@ -27,11 +27,11 @@ label start:
 
 label first_customer:
 
-    show expression "images/mail_alert.png" as alert with dissolve
+    show expression "images/blueofficemail.png" as alert with dissolve
     pause 1.5
     hide alert with dissolve
 
-    scene expression "images/customer1.png" with dissolve
+    scene expression "images/cust1.png" with dissolve
     c1 "Uhh, hello?"
     bot "Hello! I am CHATBOT, your helpful AI assistant. How may I be of service today?"
     c1 "Can I mail something to myself?"
@@ -49,11 +49,11 @@ label first_customer:
 
 label second_customer:
 
-    show expression "images/mail_alert.png" as alert with dissolve
+    show expression "images/blueofficemail.png" as alert with dissolve
     pause 1.5
     hide alert with dissolve
 
-    scene expression "images/customer2.png" with dissolve
+    scene expression "images/cust2.png" with dissolve
     bot "Hello! I am CHATBOT, your helpful AI assistant. How may I be of service today?"
 
     c2 "Does my coupon work after I use it?"
@@ -69,13 +69,13 @@ label second_customer:
 
 label third_customer:
 
-    show expression "images/mail_alert.png" as alert with dissolve
+    show expression "images/blueofficemail.png" as alert with dissolve
     pause 1.5
     hide alert with dissolve
 
     "Your unease returns. Glitch? Wire issue? Maybe later."
 
-    scene expression "images/customer3.png" with dissolve
+    scene expression "images/cust3.png" with dissolve
     c3 "EXCUSE ME! WHO THE HELL RUNS THE RETURNS DEPARTMENT?"
     bot "Hello! I am CHATBOT, your helpful AI assistant. How may I be of service today?"
     c3 "I want to return this piece of junk!"

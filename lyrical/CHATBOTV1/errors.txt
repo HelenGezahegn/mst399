@@ -2,9 +2,33 @@
 errors listed below, and try again.
 
 
-File "game/screens.rpy", line 1626: style property background appears twice.
-    background Frame("gui/bot_box.png", 30, 30)  
-              ^
+File "game/script.rpy", line 25: expected ':' not found.
+    menu "Do you want to greet them?":
+         ^
+
+File "game/script.rpy", line 65: expected ':' not found.
+    menu "Choose your response":
+         ^
+
+File "game/script.rpy", line 84: expected ':' not found.
+    menu "How do you handle the situation":
+         ^
+
+File "game/script.rpy", line 109: expected ':' not found.
+    menu "Break options":
+         ^
+
+File "game/script.rpy", line 130: expected ':' not found.
+    menu "Response to posture correction":
+         ^
+
+File "game/script.rpy", line 146: expected ':' not found.
+    menu "How do you respond":
+         ^
+
+File "game/script.rpy", line 160: expected ':' not found.
+    menu "Final choice":
+         ^
 
 Ren'Py Version: Ren'Py 8.3.7.25031702
-Mon Apr 21 03:46:31 2025
+Tue Apr 22 03:52:31 2025
