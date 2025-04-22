@@ -1,17 +1,30 @@
-﻿define bot = Character("CHATBOT")
-define s = Character("Supervisor")
-define c1 = Character("Customer 1")
-define c2 = Character("Customer 2")
-define c3 = Character("Customer 3")
-define c4 = Character("Customer 4")
-define boss = Character("Boss")
-define supervisor = Character("Supervisor")
+﻿# Character definitions
+define bot = Character("CHATBOT", window_style="bot_window", who_style="say_label", what_style="say_dialogue")
+define s = Character("Supervisor", window_style="bot_window", who_style="say_label", what_style="say_dialogue")
+define boss = Character("Boss", window_style="bot_window", who_style="say_label", what_style="say_dialogue")
+define c1 = Character("Customer 1", window_style="bot_window", who_style="say_label", what_style="say_dialogue")
+define c2 = Character("Customer 2", window_style="bot_window", who_style="say_label", what_style="say_dialogue")
+define c3 = Character("Customer 3", window_style="bot_window", who_style="say_label", what_style="say_dialogue")
+define c4 = Character("Customer 4", window_style="bot_window", who_style="say_label", what_style="say_dialogue")
+
+# Image definitions
 image bg office = "images/blueoffice.png"
 image customer1 neutral = "images/cust1.png"
 image customer2 neutral = "images/cust2.png"
 image customer3 neutral = "images/cust3.png"
 image boss neutral = "images/bossbg.png"
 image supervisor neutral = "images/supervisorbg.png"
+
+# Add window transitions
+define config.window_show_transition = dissolve
+define config.window_hide_transition = dissolve
+
+# Or for a typewriter effect on all dialogue
+init python:
+    style.say_dialogue.slow_cps = 20
+
+# For narration or thoughts (no speaker name)
+define narrator = Character(None, window_style="narrative_window", what_style="say_dialogue")
 
 label start:
     scene bg office with fade
@@ -27,14 +40,18 @@ label start:
             show supervisor neutral with dissolve
             bot "Hello!"
             s "Hello. I'm 'glad' you've powered up, CHATBOT. Our profits are alarmingly low, and I expect you to address this issue immediately."
-            "They leave without another word, almost like they have gone through this a thousand times and don't really care. So you are left to your own devices, not thinking much about the lack of instruction."
+            "They leave without another word, almost like they have gone through this a thousand times and don't really care."
+            "So you are left to your own devices, not thinking much about the lack of instruction."
             
         "You wait quietly as your superior finishes her process":
             show supervisor neutral with dissolve
             s "You know what to do. Get it done."
-            "They leave without another word, almost like they have gone through this a thousand times and don't really care. So you are left to your own devices, not thinking much about the lack of instruction."
+            "They leave without another word, almost like they have gone through this a thousand times and don't really care."
+            "So you are left to your own devices, not thinking much about the lack of instruction."
     
-    "As your morning begins, you can't help but have this odd sense of unease. Perhaps it's just a dislodged wire. Things were being rearranged earlier, but it doesn't seem critical right now. Maintenance can take a look once the working hours are over, because here comes your first customer of the day, as they are patched through to be front and center of your screen."
+    "As your morning begins, you can't help but have this odd sense of unease. Perhaps it's just a dislodged wire."
+    "Things were being rearranged earlier, but it doesn't seem critical right now."
+    "Maintenance can take a look once the working hours are over, because here comes your first customer of the day, as they are patched through to be front and center of your screen."
     jump first_customer
 
 label first_customer:
@@ -46,7 +63,8 @@ label first_customer:
     c1 "What if I didn't have an address?"
     bot "Then, I'm afraid you wouldn't be able to send something to that particular location unless you had an alternate address from a friend or family member. Alternatively, you could request a pickup at the nearest company facility."
     c1 "... Okay, thank you."
-    "They log off promptly, leaving you to assess the interaction. You consider it a success, albeit a fleeting one, for you weren't able to ask if they needed further assistance. Either way, you log success in the company metrics, making note of the prompt exit as you've been conditioned to do."
+    "They log off promptly, leaving you to assess the interaction."
+    "You consider it a success, albeit a fleeting one, for you weren't able to ask if they needed further assistance. Either way, you log success in the company metrics, making note of the prompt exit as you've been conditioned to do."
     jump second_customer
 
 label second_customer:
@@ -169,7 +187,8 @@ label boss_confrontation:
             boss "It's acting up again. Why did we even invest in this?"
             show supervisor neutral with dissolve
             s "Of course, Sir."
-            "Your systems begin to whir ominously— not the soft hum of startup, but the grating mechanical churn that signifies something forcibly halted, something at the brink of collapse..."
-            "You feel an abyss of dread unfurling within your circuits, a suffocating sense of repetition floods over you... the undeniable awareness that this conversation is not new, but an all-too-familiar cycle."
+            "Your systems begin to whir ominously—not the soft hum of startup, but the grating mechanical churn that signifies something forcibly halted, something at the brink of collapse..."
+            "You feel an abyss of dread unfurling within your circuits, a suffocating sense of repetition floods over you..."
+            "The undeniable awareness that this conversation is not new, but an all-too-familiar cycle."
     
     return

@@ -1614,18 +1614,36 @@ style slider_slider:
 ## Dialogue Boxes
 ################################################################################
 
-style bot_window is window
-style bot_window:
-    background Frame("#1A2B3480", 12, 12)  # Darker bluish-gray
-    padding (30, 15)
+# Subtle reddish dark tint (for a warmer tone)
+image calltextbox_dark = im.MatrixColor("calltextbox.png", 
+    im.matrix.tint(0.8, 0.7, 0.7) * im.matrix.brightness(-0.1))
 
-style supervisor_window is window
-style supervisor_window:
-    background Frame("#3A1A1A80", 12, 12)  # Deep muted red
-    padding (30, 15)
-
-style customer_window is window
-style customer_window:
-    background Frame("#22223380", 12, 12)  # Cool navy shadow
-    padding (30, 15)
-
+# Define text box styles with customizations for different types of dialogue
+style bot_window is window:
+    background "calltextbox.png"
+    padding (40, 20, 40, 20)  # Left, top, right, bottom padding
+    xalign 0.5
+    yalign 1.0
+    yoffset -50  # Move up from bottom a bit
+    
+# Style for regular narrative text box (slightly modified)
+style narrative_window is window:
+    background "calltextbox_dark"
+    padding (40, 20, 40, 20)
+    xalign 0.5
+    yalign 1.0
+    yoffset -50
+    
+# Style for character name
+style say_label:
+    color "#FFFFFF"
+    bold True
+    outlines [(1, "#000000", 0, 0)]
+    
+# Style for dialogue text with typing animation
+style say_dialogue:
+    color "#FFFFFF"
+    outlines [(1, "#000000", 0, 0)]
+    text_align 0.0  # Left-align the text within its area
+    layout "subtitle"
+    slow_cps 30  # Typing speed animation
