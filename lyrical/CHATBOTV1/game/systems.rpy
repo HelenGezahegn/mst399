@@ -3,6 +3,11 @@ init python:
     
     class MentalResistanceSystem:
         def __init__(self):
+            # Initialize with default starting values
+            self.reset()
+            
+        def reset(self):
+            """Reset all metrics to their starting values"""
             # Primary resources
             self.company_reputation = 75.0  # How well the company is viewed (0-100)
             self.self_awareness = 25.0      # Bot's sense of self (0-100)
