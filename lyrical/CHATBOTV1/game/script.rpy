@@ -1,4 +1,18 @@
-﻿# Character definitions
+﻿# Define the fallback background
+init -100:  # Very early initialization
+    image fallback_bg = Solid("#041e42")  # Dark navy blue background
+
+# Create a new layer below master
+init -99 python:
+    # Insert our background layer *before* master in the layer stack
+    # This ensures it's truly underneath everything
+    if "master" in config.layers:
+        # Find where master is in the list
+        master_index = config.layers.index("master")
+        # Insert background layer before master
+        config.layers.insert(master_index, "background_layer")
+
+# Character definitions
 define bot = Character("CHATBOT", window_style="bot_window", who_style="say_label", what_style="bot_dialogue")
 define s = Character("Supervisor", window_style="bot_window", who_style="say_label", what_style="supervisor_dialogue")
 
@@ -65,6 +79,7 @@ style choice_vbox:
 
 # The game starts here
 label start:
+    show fallback_bg onlayer background_layer
     scene bg office with fade
     play sound "audio/low_hum.mp3"
     play music "audio/office_ambience.mp3" loop

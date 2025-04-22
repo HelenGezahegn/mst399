@@ -1,10 +1,10 @@
-2025-04-22 20:38:50 UTC
+2025-04-22 21:23:08 UTC
 macOS-15.2-arm64-arm-64bit
 Ren'Py 8.3.7.25031702
 
 Early init took 0.03s
 Loading error handling took 0.02s
-Loading script took 0.08s
+Loading script took 0.11s
 Loading save slot metadata took 0.02s
 Loading persistent took 0.00s
 Running init code took 0.02s
@@ -26,7 +26,7 @@ Load screen analysis took 0.00s
 Analyze screens took 0.01s
 Save screen analysis took 0.01s
 Prepare screens took 0.04s
-Save pyanalysis. took 0.01s
+Save pyanalysis. took 0.00s
 Save bytecode. took 0.02s
 Running _start took 0.00s
 Interface start took 0.34s
@@ -43,10 +43,3 @@ Screen sizes: virtual=(1920, 1080) physical=(1728, 1057) drawable=(3456, 2114)
 Maximum texture size: 4096x4096
 Screen sizes: virtual=(1920, 1080) physical=(1728, 1057) drawable=(3456, 2114)
 Maximum texture size: 4096x4096
-Cleaning stores took 0.00s
-Init translation took 0.00s
-Build styles took 0.00s
-Load screen analysis took 0.02s
-Analyze screens took 0.00s
-Prepare screens took 0.00s
-Running _start took 0.00s
