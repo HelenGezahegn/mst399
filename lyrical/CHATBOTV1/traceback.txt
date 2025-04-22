@@ -1,28 +1,37 @@
 ﻿I'm sorry, but an uncaught exception occurred.
 
 While running game code:
-  File "game/script.rpy", line 196, in script
-    with flash
-  File "game/script.rpy", line 196, in <module>
-    with flash
-NameError: name 'flash' is not defined
+  File "game/script.rpy", line 1, in script
+    init python:
+  File "game/script.rpy", line 1, in script
+    init python:
+  File "game/script.rpy", line 3, in <module>
+    sys.path.append(renpy.loader.transfn("python"))
+Exception: Couldn't find file 'python'.
 
 -- Full Traceback ------------------------------------------------------------
 
 Full traceback:
-  File "game/script.rpy", line 196, in script
-    with flash
-  File "/Users/helen.gezahegn/Documents/renpy-8.3.7-sdk/renpy/ast.py", line 1367, in execute
-    trans = renpy.python.py_eval(self.expr)
-  File "/Users/helen.gezahegn/Documents/renpy-8.3.7-sdk/renpy/python.py", line 1218, in py_eval
-    return py_eval_bytecode(code, globals, locals)
-  File "/Users/helen.gezahegn/Documents/renpy-8.3.7-sdk/renpy/python.py", line 1211, in py_eval_bytecode
-    return eval(bytecode, globals, locals)
-  File "game/script.rpy", line 196, in <module>
-    with flash
-NameError: name 'flash' is not defined
+  File "/Users/helen.gezahegn/Documents/renpy-8.3.7-sdk/renpy/bootstrap.py", line 359, in bootstrap
+    renpy.main.main()
+  File "/Users/helen.gezahegn/Documents/renpy-8.3.7-sdk/renpy/main.py", line 541, in main
+    renpy.game.context().run(node)
+  File "game/script.rpy", line 1, in script
+    init python:
+  File "lib/python3.9/future/utils/__init__.py", line 444, in raise_
+  File "game/script.rpy", line 1, in script
+    init python:
+  File "/Users/helen.gezahegn/Documents/renpy-8.3.7-sdk/renpy/ast.py", line 834, in execute
+    renpy.python.py_exec_bytecode(self.code.bytecode, self.hide, store=self.store)
+  File "/Users/helen.gezahegn/Documents/renpy-8.3.7-sdk/renpy/python.py", line 1187, in py_exec_bytecode
+    exec(bytecode, globals, locals)
+  File "game/script.rpy", line 3, in <module>
+    sys.path.append(renpy.loader.transfn("python"))
+  File "/Users/helen.gezahegn/Documents/renpy-8.3.7-sdk/renpy/loader.py", line 769, in transfn
+    raise Exception("Couldn't find file '%s'." % name)
+Exception: Couldn't find file 'python'.
 
 macOS-15.2-arm64-arm-64bit arm64
 Ren'Py 8.3.7.25031702
 CHATBOTV1 1.0
-Tue Apr 22 05:37:01 2025
+Tue Apr 22 06:00:28 2025

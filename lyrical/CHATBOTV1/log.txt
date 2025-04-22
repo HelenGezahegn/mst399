@@ -1,10 +1,10 @@
-2025-04-22 11:41:31 UTC
+2025-04-22 12:08:40 UTC
 macOS-15.2-arm64-arm-64bit
 Ren'Py 8.3.7.25031702
 
 Early init took 0.03s
 Loading error handling took 0.02s
-Loading script took 0.10s
+Loading script took 0.06s
 Loading save slot metadata took 0.02s
 Loading persistent took 0.00s
 Running init code took 0.02s
@@ -13,7 +13,7 @@ Analyze and compile ATL took 0.00s
 Reloading save slot metadata took 0.01s
 Index archives took 0.00s
 Backing up script files to '/Users/helen.gezahegn/Library/RenPy/backups/CHATBOTV1':
-Dump and make backups took 0.03s
+Dump and make backups took 0.02s
 Cleaning cache took 0.00s
 Making clean stores took 0.00s
 Initial gc took 0.02s
@@ -41,10 +41,3 @@ Version: b'2.1 Metal - 89.3'
 Display Info: None
 Screen sizes: virtual=(1920, 1080) physical=(1626, 915) drawable=(3252, 1830)
 Maximum texture size: 4096x4096
-Cleaning stores took 0.00s
-Init translation took 0.00s
-Build styles took 0.00s
-Load screen analysis took 0.02s
-Analyze screens took 0.00s
-Prepare screens took 0.00s
-Running _start took 0.00s

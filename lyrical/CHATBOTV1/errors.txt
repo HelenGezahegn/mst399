@@ -2,9 +2,17 @@
 errors listed below, and try again.
 
 
-File "game/screens.rpy", line 829: screen expects a non-empty block.
-    screen confirm(message, yes_action, no_action):
-                                                   ^
+File "game/python_modules.rpy", line 64: expected statement.
+    import renpy
+                ^
+
+File "game/python_modules.rpy", line 65: expected statement.
+    from renpy.display.transform import Transform
+              ^
+
+File "game/python_modules.rpy", line 67: expected statement.
+    class SpriteManager:
+                       ^
 
 Ren'Py Version: Ren'Py 8.3.7.25031702
-Tue Apr 22 04:35:10 2025
+Tue Apr 22 06:03:55 2025
