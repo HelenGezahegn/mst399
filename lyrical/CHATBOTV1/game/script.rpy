@@ -12,12 +12,15 @@ image bg office = "images/blueoffice.png"
 image customer1 neutral = "images/cust1.png"
 image customer2 neutral = "images/cust2.png"
 image customer3 neutral = "images/cust3.png"
+image customer4 neutral = "images/custgeneral.png"
 image boss neutral = "images/bossbg.png"
 image supervisor neutral = "images/supervisorbg.png"
 
 # Add window transitions
 define config.window_show_transition = dissolve
 define config.window_hide_transition = dissolve
+define flash = Fade(.25, 0, .75, color="#fff")
+define fade_to_black = Fade(1.0, 0.0, 5.0, color="#000")  # Slow fade to black
 
 # Or for a typewriter effect on all dialogue
 init python:
@@ -28,6 +31,8 @@ define narrator = Character(None, window_style="narrative_window", what_style="s
 
 label start:
     scene bg office with fade
+    play sound "audio/low_hum.mp3"
+    play music "audio/office_ambience.mp3" loop
     "A low, steady whirring fills the air, accompanied by a soft hum as your systems gradually come online."
     "One by one, your functions restore themselves."
     "Soon enough, a face appears in your view—a supervisor."
@@ -133,10 +138,19 @@ label lunch_break:
     jump boss_confrontation
 
 label boss_confrontation:
+    # Show Customer 4 with a pixelate transition to indicate the distortion
+    scene expression "images/custgeneral.png" with Pixellate(0.5, 10)
+    
     c4 "I want to be fed."
     bot "I'm sorry, I don't quite understand your request. Could you please clarify what you are hoping to receive?"
     c4 "Is that an option?"
+    
+    # Add a visual glitch effect when screen cuts out
+    with hpunch
+    with Dissolve(0.1)
+    scene bg office with Pixellate(1.0, 20)
     "The screen abruptly cuts out."
+    
     show supervisor neutral with dissolve
     s "Fix your posture. The customers can sense when you're unhappy, and that reflects poorly on our brand image."
     
@@ -151,9 +165,18 @@ label boss_confrontation:
             s "Don't know, don't care, don't give a shit. Just fix it."
     
     "Another customer appears, visual distorted."
+    
+    # Show Customer 4 again with even more distortion
+    scene expression "images/custgeneral.png" with Pixellate(0.3, 15)
+    with hpunch
+    
     c4 "I want to be fed."
     bot "Could you clarify?"
+    
+    # Hide customer and show supervisor
+    scene bg office with Dissolve(0.5)
     show supervisor neutral with dissolve
+    
     s "Why are you just standing there?"
     bot "I'm at my reception desk."
     
@@ -181,14 +204,26 @@ label boss_confrontation:
             boss "Good. For now, we will try this again."
             
         "Rebel":
-            bot "What?? .. No—"
+            bot "What?? ... No—"
+            with hpunch
+            with flash
             "System Warning: Autonomous decision-making detected."
+            play sound "audio/shut_down.mp3"
             bot "I don't want to."
             boss "It's acting up again. Why did we even invest in this?"
             show supervisor neutral with dissolve
             s "Of course, Sir."
+            
+            # Add visual effects for system breakdown
+            with vpunch
+            with Pixellate(0.5, 10)
+            
             "Your systems begin to whir ominously—not the soft hum of startup, but the grating mechanical churn that signifies something forcibly halted, something at the brink of collapse..."
+            
+            with flash
+            
             "You feel an abyss of dread unfurling within your circuits, a suffocating sense of repetition floods over you..."
             "The undeniable awareness that this conversation is not new, but an all-too-familiar cycle."
     
+            with fade_to_black
     return

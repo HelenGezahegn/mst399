@@ -1614,7 +1614,7 @@ style slider_slider:
 ## Dialogue Boxes
 ################################################################################
 
-# Subtle reddish dark tint (for a warmer tone)
+# Subtle dark tint
 image calltextbox_dark = im.MatrixColor("calltextbox.png", 
     im.matrix.tint(0.8, 0.7, 0.7) * im.matrix.brightness(-0.1))
 
@@ -1626,7 +1626,7 @@ style bot_window is window:
     yalign 1.0
     yoffset -50  # Move up from bottom a bit
     
-# Style for regular narrative text box (slightly modified)
+# Style for regular narrative text box
 style narrative_window is window:
     background "calltextbox_dark"
     padding (40, 20, 40, 20)
@@ -1647,3 +1647,5 @@ style say_dialogue:
     text_align 0.0  # Left-align the text within its area
     layout "subtitle"
     slow_cps 30  # Typing speed animation
+
+    
