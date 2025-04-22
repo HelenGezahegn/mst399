@@ -1,0 +1,20 @@
+﻿I'm sorry, but an uncaught exception occurred.
+
+After initialization, but before game start.
+PermissionError: [Errno 13] Permission denied: '/Users/helen.gezahegn/Documents/school/mst399/lyrical/CHATBOT/game/saves/navigation.json.new'
+
+-- Full Traceback ------------------------------------------------------------
+
+Full traceback:
+  File "/Users/helen.gezahegn/Documents/renpy-8.3.7-sdk/renpy/bootstrap.py", line 359, in bootstrap
+    renpy.main.main()
+  File "/Users/helen.gezahegn/Documents/renpy-8.3.7-sdk/renpy/main.py", line 599, in main
+    renpy.dump.dump(False)
+  File "/Users/helen.gezahegn/Documents/renpy-8.3.7-sdk/renpy/dump.py", line 256, in dump
+    with open(new, "w") as f:
+PermissionError: [Errno 13] Permission denied: '/Users/helen.gezahegn/Documents/school/mst399/lyrical/CHATBOT/game/saves/navigation.json.new'
+
+macOS-15.2-arm64-arm-64bit arm64
+Ren'Py 8.3.7.25031702
+CHATBOT 1.0
+Mon Apr 21 03:00:02 2025
