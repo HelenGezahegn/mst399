@@ -2,9 +2,9 @@
 errors listed below, and try again.
 
 
-File "game/sprite_manager.rpy", line 1: expected statement.
-    class SpriteManager:
-                       ^
+File "game/screens.rpy", line 103: The if statement is not a valid child of the window statement.
+    yalign 0.98 if who is None else gui.textbox_yalign
+                  ^
 
 Ren'Py Version: Ren'Py 8.3.7.25031702
-Tue Apr 22 07:09:56 2025
+Tue Apr 22 14:31:44 2025

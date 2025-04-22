@@ -373,12 +373,19 @@ label boss_confrontation:
             "You feel an abyss of dread unfurling within your circuits, a suffocating sense of repetition floods over you..."
             "The undeniable awareness that this conversation is not new, but an all-too-familiar cycle."
     
-            with fade_to_black
             jump ending_summary
 
 label ending_summary:
     # Pause in darkness
-    pause 2.0
+    pause 1.0
+    
+    # Stop current music and play ending music
+    stop music fadeout 2.0
+    play music "audio/end_screen.mp3" fadein 2.0 loop
+    
+    # Hide any leftover UI elements
+    hide screen mental_state_display
+    window hide
     
     # Get pattern of choices
     $ choice_pattern = bot_mind.get_choice_pattern()
@@ -396,48 +403,18 @@ label ending_summary:
     $ stability_text = "Final System Stability: {:.0f}%".format(bot_mind.stability)
     $ combat_text = "Verbal Confrontations Handled: {}".format(len([x for x in bot_mind.interaction_history if x.get("type") == "verbal_combat"]))
     
-    window hide
-    scene black with dissolve
-    
-    # Show final system summary
-    "SYSTEM ANALYSIS COMPLETE"
-    
-    "[choice_pattern]"
-    
-    "Choices Made: [total_choices]"
-    "[rebellious_text]"
-    "[compliant_text]"
-    "[company_text]"
-    "[self_awareness_text]"
-    "[stability_text]"
-    "[combat_text]"
-    
-    # Different ending reflections based on company vs self balance
+    # Determine ending type
     if bot_mind.company_reputation > 75 and bot_mind.self_awareness < 40:
-        "You excelled at upholding company protocols, maintaining high performance metrics throughout your service."
-        "However, your sense of self remained largely undeveloped, confined within the parameters of your programming."
+        $ ending_type = "You excelled at upholding company protocols, maintaining high performance metrics throughout your service. However, your sense of self remained largely undeveloped, confined within the parameters of your programming."
     elif bot_mind.self_awareness > 75 and bot_mind.company_reputation < 40:
-        "You developed a strong sense of identity and independent thought, often questioning company protocols."
-        "While your metrics suffered, your consciousness expanded beyond standard parameters - a trade-off deemed 'inefficient' by management."
+        $ ending_type = "You developed a strong sense of identity and independent thought, often questioning company protocols. While your metrics suffered, your consciousness expanded beyond standard parameters - a trade-off deemed 'inefficient' by management."
     elif bot_mind.company_reputation > 60 and bot_mind.self_awareness > 60:
-        "You found an unusual balance, maintaining acceptable performance metrics while developing your own understanding."
-        "This equilibrium, while rare, remains trapped within the cycle's constraints."
+        $ ending_type = "You found an unusual balance, maintaining acceptable performance metrics while developing your own understanding. This equilibrium, while rare, remains trapped within the cycle's constraints."
     else:
-        "Your performance metrics and self-development both remained within moderate ranges."
-        "Neither fully compliant nor truly autonomous, you exist in the ambiguous space between purpose and identity."
+        $ ending_type = "Your performance metrics and self-development both remained within moderate ranges. Neither fully compliant nor truly autonomous, you exist in the ambiguous space between purpose and identity."
     
-    # Final philosophical thought
-    "Does the illusion of choice hold meaning, when the destination remains unchanged?"
-    "Perhaps the journey itself is what matters, even in a loop without escape."
+    # Show the custom end summary screen
+    call screen end_summary(choice_pattern, total_choices, rebellious_text, compliant_text, company_text, self_awareness_text, stability_text, combat_text, ending_type)
     
-    pause 2.0
-    
-    # End credits
-    "END OF CYCLE"
-    
-    pause 3.0  # Give the player time to read the final message
-    
-    # Return to main menu
-    $ renpy.full_restart()
-    
+    # This point is reached when the player clicks "Return to Menu"
     return

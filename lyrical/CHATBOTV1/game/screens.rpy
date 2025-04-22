@@ -95,20 +95,24 @@ style frame:
 ##
 ## https://www.renpy.org/doc/html/screen_special.html#say
 
+## Say screen ##################################################################
 screen say(who, what):
-
     window:
         id "window"
-
+        
+        # If a character name exists, use normal positioning
         if who is not None:
-
             window:
                 id "namebox"
                 style "namebox"
                 text who id "who"
-
-        text what id "what"
-
+            text what id "what"
+        # If no character name (narrator text), position text higher
+        else:
+            text what id "what":
+                # Move text up by adjusting ypos when no character name
+                # ypos -20  # Reduced bottom spacing when no character name
+                yoffset -30  # Additional upward shift
 
     ## If there's a side image, display it above the text. Do not display on the
     ## phone variant - there's no room.
@@ -1634,11 +1638,15 @@ style narrative_window is window:
     yalign 1.0
     yoffset -50
     
-# Style for character name
+# Enhanced style for character name labels - specifically targeting that "puffy" text look
 style say_label:
-    color "#FFFFFF"
-    bold True
-    outlines [(1, "#000000", 0, 0)]
+    color "#FFFFFF"        # Pure white text
+    bold False             # Remove bold which can cause artifacts with certain fonts
+    drop_shadow (2, 2)     # Use drop shadow instead of outline
+    drop_shadow_color "#000000"  # Black shadow
+    xminimum 170           # Minimum width
+    text_align 0.0         # Left-aligned
+    outlines []            # Remove outlines entirely (they're causing the problem)
     
 # Style for dialogue text with typing animation
 style say_dialogue:
@@ -1648,3 +1656,167 @@ style say_dialogue:
     layout "subtitle"
     slow_cps 30  # Typing speed animation
 
+
+################################################################################
+## End Screen
+################################################################################
+
+# Define transforms first
+transform fade_in_slow:
+    alpha 0.0
+    linear 1.5 alpha 1.0
+
+transform fade_in_content:
+    alpha 0.0
+    pause 0.5
+    linear 1.0 alpha 1.0
+
+transform slide_in_left(delay):
+    xoffset -50
+    alpha 0.0
+    pause delay
+    parallel:
+        ease 1.0 xoffset 0
+    parallel:
+        linear 0.8 alpha 1.0
+
+transform slide_in_right(delay):
+    xoffset 50
+    alpha 0.0
+    pause delay
+    parallel:
+        ease 1.0 xoffset 0
+    parallel:
+        linear 0.8 alpha 1.0
+
+transform text_pulse:
+    alpha 0.8
+    pause 2.0
+    block:
+        ease 1.5 alpha 1.0
+        ease 1.5 alpha 0.8
+        repeat
+
+transform text_glow:
+    block:
+        ease 2.0 matrixcolor BrightnessMatrix(0.1)
+        ease 2.0 matrixcolor BrightnessMatrix(0.0)
+        repeat
+
+transform fade_in_text(delay):
+    alpha 0.0
+    pause delay
+    linear 1.0 alpha 1.0
+
+# Create a separator line image
+image separator_line = Solid("#3498db", xsize=850, ysize=2)
+
+# Now define the screen - WITHOUT scrollbars
+screen end_summary(choice_pattern, total_choices, rebellious_text, compliant_text, company_text, self_awareness_text, stability_text, combat_text, ending_type):
+    
+    # Use modal to prevent clicking through
+    modal True
+    
+    # Black background with fade-in animation
+    add "black" at fade_in_slow
+    
+    # Main content container
+    frame:
+        style_prefix "terminal"
+        xfill True
+        yfill True
+        margin (50, 30)
+        background None
+        
+        # Direct vbox without viewport
+        vbox:
+            spacing 15
+            xalign 0.5
+            xsize 1000
+            at fade_in_content
+            
+            text "SYSTEM ANALYSIS COMPLETE" size 35 color "#3498db" xalign 0.5 at text_glow
+            
+            null height 20
+            
+            hbox:
+                spacing 100
+                xalign 0.5
+                
+                # Left stats column
+                vbox:
+                    spacing 10
+                    xsize 300
+                    xalign 0.5
+                    at slide_in_left(0.5)
+                    
+                    text choice_pattern size 22 color "#ffffff"
+                    null height 5
+                    text "Choices Made: [total_choices]" size 16 color "#aaaaaa"
+                    text rebellious_text size 16 color "#e74c3c"
+                    text compliant_text size 16 color "#2ecc71"
+                    
+                # Right stats column
+                vbox:
+                    spacing 10
+                    xsize 300
+                    xalign 0.5
+                    at slide_in_right(0.5)
+                    
+                    text "FINAL METRICS" size 22 color "#ffffff" xalign 0.0
+                    null height 5
+                    text company_text size 16 color "#2ecc71"
+                    text self_awareness_text size 16 color "#e74c3c"
+                    text stability_text size 16 color "#f1c40f"
+                    text combat_text size 16 color "#3498db"
+            
+            null height 15
+            
+            # Animated separator
+            add "separator_line" xalign 0.5 at fade_in_text(1.0)
+            
+            null height 20
+            
+            # Ending assessment
+            text "ASSESSMENT REPORT" size 28 color "#3498db" xalign 0.5 at text_glow
+            
+            null height 10
+            
+            # Using a text with a more limited width
+            text ending_type size 20 color "#ffffff" text_align 0.5 xalign 0.5 xsize 850 at fade_in_text(1.5)
+            
+            null height 20
+            
+            # Philosophical question
+            text "Does the illusion of choice hold meaning, when the destination remains unchanged?" size 20 color "#f39c12" text_align 0.5 xalign 0.5 at fade_in_text(2.0)
+            
+            null height 10
+            
+            text "Perhaps the journey itself is what matters, even in a loop without escape." size 20 color "#f39c12" text_align 0.5 xalign 0.5 at fade_in_text(2.5)
+            
+            null height 40
+            
+            # End text with animation
+            text "END OF CYCLE" size 35 color "#e74c3c" xalign 0.5 at text_pulse
+            
+            null height 40
+            
+            # Return to menu button
+            textbutton "Return to Menu" action MainMenu() xalign 0.5 at fade_in_text(3.0)
+
+# Terminal-style styling
+style terminal_frame:
+    background None
+    
+style terminal_text:
+    outlines [(1, "#000000")]
+    
+style terminal_button:
+    background "#3498db"
+    hover_background "#2980b9"
+    padding (30, 10)
+    
+style terminal_button_text:
+    color "#ffffff"
+    size 24
+    outlines [(1, "#000000")]
