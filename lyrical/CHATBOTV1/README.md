@@ -76,6 +76,6 @@ This project was created as part of **MST 399: Trans & Queer Game Design**, expl
 ## 🙌 Credits
 
 - **Concept & Coding**: [@HelenGezahegn](github.com/HelenGezahegn)
-- **Art**: Monika [@Cosmicdeers](github.com/HelenGezahegn)
-- **Script**: Morgan  
+- **Art**: Monika Balint [@Cosmicdeers](github.com/HelenGezahegn)
+- **Script**: Morgan Andringa 
 - Special thanks to the MST 399 Trans Game Design course cohort for feedback and support.
