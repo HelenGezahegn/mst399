@@ -1,0 +1,22 @@
+﻿I'm sorry, but an uncaught exception occurred.
+
+While running game code:
+  File "game/makeymakey.rpy", line 202, in script
+    jump main_menu
+ScriptError: could not find label 'main_menu'.
+
+-- Full Traceback ------------------------------------------------------------
+
+Full traceback:
+  File "game/makeymakey.rpy", line 202, in script
+    jump main_menu
+  File "/Users/helen.gezahegn/Documents/renpy-8.3.7-sdk/renpy/ast.py", line 1712, in execute
+    rv = renpy.game.script.lookup(target)
+  File "/Users/helen.gezahegn/Documents/renpy-8.3.7-sdk/renpy/script.py", line 1103, in lookup
+    raise ScriptError("could not find label '%s'." % str(original))
+ScriptError: could not find label 'main_menu'.
+
+macOS-15.2-arm64-arm-64bit arm64
+Ren'Py 8.3.7.25031702
+CHATBOTV1 1.0
+Tue Apr 22 21:43:29 2025

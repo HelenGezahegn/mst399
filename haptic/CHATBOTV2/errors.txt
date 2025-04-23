@@ -1,0 +1,10 @@
+﻿I'm sorry, but errors were detected in your script. Please correct the
+errors listed below, and try again.
+
+
+File "game/makeymakey.rpy", line 148: Line is indented, but the preceding one-line python statement statement does not expect a block. Please check this line's indentation. You may have forgotten a colon (:).
+    $ renpy.pause(0.1, hard=False)
+    ^
+
+Ren'Py Version: Ren'Py 8.3.7.25031702
+Tue Apr 22 22:17:56 2025
