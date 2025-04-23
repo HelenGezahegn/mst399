@@ -26,7 +26,7 @@ init -99 python:
 # Main characters with customized text styles for personality
 define bot = Character("CHATBOT", window_style="bot_window", who_style="say_label", what_style="bot_dialogue")
 define s = Character("Supervisor", window_style="bot_window", who_style="say_label", what_style="supervisor_dialogue")
-define boss = Character("Regional Manager", window_style="bot_window", who_style="say_label", what_style="boss_dialogue")
+define boss = Character("Boss", window_style="bot_window", who_style="say_label", what_style="boss_dialogue")
 
 # Customers with varying temperaments
 define c1 = Character("Customer 1", window_style="bot_window", who_style="say_label", what_style="customer_dialogue")
