@@ -56,9 +56,9 @@ This project was created as part of **MST 399: Trans & Queer Game Design**, expl
 
 ## 🖼 Screenshots  
 <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
-  <img src="https://github.com/user-attachments/assets/c2229603-dc07-45e2-9eab-fcda2212308a" width="300" />
-  <img src="https://github.com/user-attachments/assets/880a378a-7a2f-4f09-a7e9-0969f31d0e5e" width="300" />
-  <img src="https://github.com/user-attachments/assets/a7b77349-2b87-4c9a-8396-f6202c25553d" width="300" />
+  <img src="https://github.com/user-attachments/assets/c2229603-dc07-45e2-9eab-fcda2212308a" width="250" />
+  <img src="https://github.com/user-attachments/assets/880a378a-7a2f-4f09-a7e9-0969f31d0e5e" width="250" />
+  <img src="https://github.com/user-attachments/assets/a7b77349-2b87-4c9a-8396-f6202c25553d" width="250" />
 </div>
 
 
