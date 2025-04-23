@@ -2,9 +2,9 @@
 errors listed below, and try again.
 
 
-File "game/screens.rpy", line 103: The if statement is not a valid child of the window statement.
-    yalign 0.98 if who is None else gui.textbox_yalign
-                  ^
+File "game/script.rpy", line 530: is not terminated with a newline. (Check strings and parenthesis.)
+(Perhaps you left out a " at the end of the first line.)
+            $ ending_type = "You found an unusual balance, maintaining acceptable performance metrics while developing your own understanding. This equilibrium, while rare, remains trapped within the cycle
 
 Ren'Py Version: Ren'Py 8.3.7.25031702
-Tue Apr 22 14:31:44 2025
+Tue Apr 22 17:06:02 2025
