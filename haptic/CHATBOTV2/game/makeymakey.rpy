@@ -1,78 +1,111 @@
-# makeymakey.rpy - Complete Ren'Py-only solution
-
-# Simple counter implementation
-init -10 python:
-    # Global counter variables
-    up_count = 0
-    down_count = 0
-    left_count = 0
-    right_count = 0
-    click_count = 0
-    right_click_count = 0
+init -1 python:
+    key_counts = {
+        "up": 0,
+        "down": 0,
+        "click": 0,
+        "right_click": 0,
+        "space": 0
+    }
     
-    # Simple counter functions
-    def increment_up():
-        global up_count
-        up_count += 1
-        renpy.notify(f"UP: {up_count}")
+    # Recent input history
+    key_history = []
     
-    def increment_down():
-        global down_count
-        down_count += 1
-        renpy.notify(f"DOWN: {down_count}")
+    # Save original keymap to restore later
+    original_keymap = dict(config.keymap)
     
-    def increment_left():
-        global left_count
-        left_count += 1
-        renpy.notify(f"LEFT: {left_count}")
+    # Function to disable navigation keys
+    def disable_navigation():
+        # Save existing navigation keys
+        global original_keymap
+        original_keymap = dict(config.keymap)
+        
+        # Disable navigation by setting empty keymaps
+        config.keymap['game_menu'] = []
+        config.keymap['hide_windows'] = []
+        config.keymap['self_voicing'] = []
+        config.keymap['accessibility'] = []
+        config.keymap['rollback'] = []
+        config.keymap['rollforward'] = []
+        
+        # Set custom keymap handlers
+        config.keymap['test_up'] = ['K_UP']
+        config.keymap['test_down'] = ['K_DOWN']
+        config.keymap['test_space'] = ['K_SPACE']
+        
+        renpy.hide_screen("quick_menu")
     
-    def increment_right():
-        global right_count
-        right_count += 1
-        renpy.notify(f"RIGHT: {right_count}")
+    # Function to restore navigation
+    def restore_navigation():
+        global original_keymap
+        config.keymap = dict(original_keymap)
     
-    def increment_click():
-        global click_count
-        click_count += 1
-        renpy.notify(f"CLICK: {click_count}")
+    # Function to track a key press with special mappings
+    def record_keypress(key_name):
+        global key_counts, key_history
+        
+        # Special mapping: SPACE also triggers RIGHT_CLICK
+        if key_name == "space":
+            # Increment both space and right_click counters
+            key_counts["space"] = key_counts.get("space", 0) + 1
+            key_counts["right_click"] = key_counts.get("right_click", 0) + 1
+            
+            # Add to history
+            key_history.insert(0, f"space → right_click")
+            if len(key_history) > 5:
+                key_history.pop()
+                
+            # Notify
+            renpy.notify(f"SPACE mapped to RIGHT CLICK: {key_counts['right_click']}")
+        else:
+            # Regular key - increment its counter
+            key_counts[key_name] = key_counts.get(key_name, 0) + 1
+            
+            # Add to history
+            key_history.insert(0, key_name)
+            if len(key_history) > 5:
+                key_history.pop()
+            
+            # Notify
+            renpy.notify(f"{key_name}: {key_counts[key_name]}")
+        
+        # Force screen update
+        renpy.restart_interaction()
     
-    def increment_right_click():
-        global right_click_count
-        right_click_count += 1
-        renpy.notify(f"RIGHT CLICK: {right_click_count}")
-    
-    def reset_all():
-        global up_count, down_count, left_count, right_count, click_count, right_click_count
-        up_count = 0
-        down_count = 0
-        left_count = 0
-        right_count = 0
-        click_count = 0
-        right_click_count = 0
+    # Reset all counters
+    def reset_all_keys():
+        global key_counts, key_history
+        key_counts = {k: 0 for k in key_counts}
+        key_history = []
         renpy.notify("All counters reset")
-
-# Super simple MakeyMakey test screen
+# Custom screen with simplified layout
 screen makeymakey_test():
-    # Make the screen modal so it captures all input
+    # Use modal to prevent clicks going elsewhere
     modal True
     
     # Background
     add "makeymakey_bg.png"
     
-    # Title
-    text "MakeyMakey Test" size 80 color "#78c4ff":
+    # Title and Return button area
+    vbox:
         xpos 75
         ypos 75
+        spacing 20
+        
+        text "MakeyMakey Test" size 80 color "#78c4ff"
+        
+        textbutton "Return to Main Menu (Press Enter)":
+            text_color "#a0a0a0"
+            text_hover_color "#ffffff"
+            action [Function(restore_navigation), Return()]
     
-    # Return button
-    textbutton "Return to Main Menu":
-        xpos 75
-        ypos 165
-        text_color "#a0a0a0"
-        text_hover_color "#ffffff"
-        action Return()
+    # Key handler - only track up, down, space, and clicks
+    key "K_UP" action Function(record_keypress, "up")
+    key "K_DOWN" action Function(record_keypress, "down")
+    key "K_SPACE" action Function(record_keypress, "space")  # Maps to right_click too
+    key "mouseup_1" action Function(record_keypress, "click")
+    key "mouseup_3" action Function(record_keypress, "right_click")
     
-    # Input counter display
+    # Counter display - top right with clear styling
     frame:
         xalign 0.98
         yalign 0.05
@@ -80,105 +113,93 @@ screen makeymakey_test():
         padding (20, 20)
         
         vbox:
-            spacing 10
+            spacing 15
             
-            text "Input Counter:" color "#ffffff" xalign 0.5
+            text "Input Counter:" color "#ffffff" xalign 0.5 size 24
             
-            text f"UP: {up_count}" color "#cccccc"
-            text f"DOWN: {down_count}" color "#cccccc"
-            text f"LEFT: {left_count}" color "#cccccc"
-            text f"RIGHT: {right_count}" color "#cccccc"
-            text f"CLICK: {click_count}" color "#cccccc"
-            text f"RIGHT CLICK: {right_click_count}" color "#cccccc"
-            
-            null height 20
-            
-            text "Test Inputs:" color "#ffffff" xalign 0.5
-            
-            # Action buttons
-            grid 2 2:
-                spacing 15
-                
-                textbutton "↑ Up":
-                    action increment_up
-                    text_color "#ffffff"
-                    text_hover_color "#78c4ff"
-                
-                textbutton "↓ Down":
-                    action increment_down
-                    text_color "#ffffff"
-                    text_hover_color "#78c4ff"
-                
-                textbutton "← Left":
-                    action increment_left
-                    text_color "#ffffff"
-                    text_hover_color "#78c4ff"
-                
-                textbutton "→ Right":
-                    action increment_right
-                    text_color "#ffffff"
-                    text_hover_color "#78c4ff"
-            
-            null height 10
-            
-            grid 2 1:
-                spacing 15
-                textbutton "Click":
-                    action increment_click
-                    text_color "#ffffff"
-                    text_hover_color "#78c4ff"
-                
-                textbutton "Right Click":
-                    action increment_right_click
-                    text_color "#ffffff"
-                    text_hover_color "#78c4ff"
+            # Only show relevant counters with clearer labels
+            text "UP ARROW: [key_counts['up']]" color "#cccccc"
+            text "DOWN ARROW: [key_counts['down']]" color "#cccccc"
+            text "LEFT CLICK: [key_counts['click']]" color "#cccccc"
+            hbox:
+                spacing 5
+                text "RIGHT CLICK: [key_counts['right_click']]" color "#f1c40f"
+                text "←" color "#f1c40f"
+                text "Space maps here" color "#f1c40f" size 16
+            hbox:
+                spacing 5
+                text "SPACE: [key_counts['space']]" color "#f1c40f"
+                text "→" color "#f1c40f"
+                text "Maps to right click" color "#f1c40f" size 16
             
             null height 20
+            
+            # Recent inputs
+            text "Recent Inputs:" color "#ffffff" xalign 0.5 size 24
+            if key_history:
+                vbox:
+                    spacing 5
+                    for entry in key_history:
+                        if "→" in entry:
+                            text entry color "#f1c40f"  # Highlight mapped inputs
+                        else:
+                            text f"- {entry}" color "#cccccc"
+            else:
+                text "No inputs yet" color "#555555"
+            
+            null height 15
             
             # Reset button
             textbutton "Reset Counters":
-                action reset_all
-                text_color "#ffffff"
+                xalign 0.5
+                action Function(reset_all_keys)
+                text_color "#ffffff" 
                 text_hover_color "#e74c3c"
     
-    # Instructions panel at the bottom
+    # BOTTOM INSTRUCTION BOX
     frame:
         xalign 0.5
-        yalign 1.0
-        xsize 1000
+        yalign 0.96
+        xsize 650
         background "#00000080"
-        padding (20, 20)
-        margin (0, 0, 0, 20)
+        padding (20, 15)
         
         vbox:
             spacing 10
-            text "This screen demonstrates how the MakeyMakey controller works." color "#ffffff" xalign 0.5
-            text "Click the buttons on the right to simulate MakeyMakey inputs:" color "#ffffff" xalign 0.5
+            xalign 0.5
+            
+            text "Raw Key Event Capture Active" size 28 color "#ffffff" xalign 0.5
+            text "Controller Hander for Haptic Experiment's Robot Hands" size 22 color "#ffffff" xalign 0.5
+            
+            null height 5
             
             hbox:
                 xalign 0.5
-                spacing 40
+                spacing 50
                 
                 vbox:
-                    spacing 5
-                    text "• LEFT HAND → LEFT CLICK" color "#cccccc"
-                    text "• RIGHT HAND → RIGHT CLICK" color "#cccccc"
+                    spacing 8
+                    xalign 0.5
+                    text "- Pointer finger: Left click" color "#cccccc" size 22
+                    text "- Middle finger: Right click" color "#cccccc" size 22
                 
                 vbox:
-                    spacing 5
-                    text "• LEFT FOOT → UP ARROW" color "#cccccc"
-                    text "• RIGHT FOOT → DOWN ARROW" color "#cccccc"
+                    spacing 8
+                    xalign 0.5
+                    text "- Yellow Arrow: Up" color "#cccccc" size 22
+                    text "- Orange Arrow: Down" color "#cccccc" size 22
 
-# Simple entry point
+# Test label with navigation disabled
 label test_makey_makey:
-    # Reset counters
-    $ reset_all()
+    # Disable navigation to capture raw key events
+    $ disable_navigation()
     
-    # Hide main menu
+    # Reset counters
+    $ reset_all_keys()
+    
     $ renpy.hide_screen("main_menu")
     
-    # Go to the test screen
+    # Show our test screen with raw key handling
     call screen makeymakey_test
     
-    # This will get called when Return is clicked
     return

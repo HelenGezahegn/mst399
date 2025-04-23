@@ -1,22 +1,32 @@
 ﻿I'm sorry, but an uncaught exception occurred.
 
 While running game code:
-  File "game/makeymakey.rpy", line 202, in script
-    jump main_menu
-ScriptError: could not find label 'main_menu'.
+  File "game/makeymakey.rpy", line 192, in script
+    $ disable_navigation()
+  File "game/makeymakey.rpy", line 192, in <module>
+    $ disable_navigation()
+  File "game/makeymakey.rpy", line 46, in disable_navigation
+    config.underlay_screens = []
+Exception: config.underlay_screens is not a known configuration variable.
 
 -- Full Traceback ------------------------------------------------------------
 
 Full traceback:
-  File "game/makeymakey.rpy", line 202, in script
-    jump main_menu
-  File "/Users/helen.gezahegn/Documents/renpy-8.3.7-sdk/renpy/ast.py", line 1712, in execute
-    rv = renpy.game.script.lookup(target)
-  File "/Users/helen.gezahegn/Documents/renpy-8.3.7-sdk/renpy/script.py", line 1103, in lookup
-    raise ScriptError("could not find label '%s'." % str(original))
-ScriptError: could not find label 'main_menu'.
+  File "game/makeymakey.rpy", line 192, in script
+    $ disable_navigation()
+  File "/Users/helen.gezahegn/Documents/renpy-8.3.7-sdk/renpy/ast.py", line 834, in execute
+    renpy.python.py_exec_bytecode(self.code.bytecode, self.hide, store=self.store)
+  File "/Users/helen.gezahegn/Documents/renpy-8.3.7-sdk/renpy/python.py", line 1187, in py_exec_bytecode
+    exec(bytecode, globals, locals)
+  File "game/makeymakey.rpy", line 192, in <module>
+    $ disable_navigation()
+  File "game/makeymakey.rpy", line 46, in disable_navigation
+    config.underlay_screens = []
+  File "/Users/helen.gezahegn/Documents/renpy-8.3.7-sdk/renpy/defaultstore.py", line 101, in __setattr__
+    raise Exception('config.%s is not a known configuration variable.' % (name))
+Exception: config.underlay_screens is not a known configuration variable.
 
 macOS-15.2-arm64-arm-64bit arm64
 Ren'Py 8.3.7.25031702
 CHATBOTV1 1.0
-Tue Apr 22 21:43:29 2025
+Wed Apr 23 00:48:58 2025
